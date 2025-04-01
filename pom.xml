@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -22,7 +22,7 @@
         <junit.version>5.9.3</junit.version>
         <log4j.version>2.20.0</log4j.version>
         <sonar.host.url>http://172.21.40.70:9000/</sonar.host.url>
-        <sonar.login>squ_7d7ce03629cf18ba3bf0e293dadcd684ee6d5996</sonar.login>
+        <sonar.login>squ_e8910cdcd94a8cd9223d5dbcc5875bc156d6a59f</sonar.login>
         <sonar.version>9.9.3.79811</sonar.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -82,14 +82,14 @@
     <distributionManagement>
         <repository>
             <id>nexus</id>
-            <name>Mithun Technologies Releases Nexus Repository</name>
-            <url>http://13.212.71.229:9980/mithuntechnologies/repository/canarabank-snapshot/</url>
+            <name>Sample-Test Repository</name>
+            <url>http://172.21.40.70:8081/repository/sample-test/</url>
         </repository>
 
         <snapshotRepository>
             <id>nexus</id>
-            <name>Mithun Technologies Snapshot Nexus Repository</name>
-            <url>http://13.212.71.229:9980/mithuntechnologies/repository/canarabank-release/</url>
+            <name>Sample-Test Snapshot Repository</name>
+            <url>http://172.21.40.70:8081/repository/sample-test-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
