@@ -22,8 +22,8 @@
         <junit.version>5.9.3</junit.version>
         <log4j.version>2.20.0</log4j.version>
         <sonar.host.url>http://172.21.40.70:9000/</sonar.host.url>
-        <sonar.login>squ_9e8a0a7c34685a1a560e09fb17bbcba67ee35b1c</sonar.login>
-        <sonar.version>9.9.3.79811</sonar.version>
+        <sonar.login>squ_092d81392297cd159031026e7952c60af271c28d</sonar.login>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -42,7 +42,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Corrected Servlet API for Tomcat 9 -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -96,11 +95,14 @@
     <build>
         <finalName>maven-web-application</finalName>
         <plugins>
+            <!-- WAR Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
             </plugin>
+
+            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -110,6 +112,8 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
+
+            <!-- Jetty (for local testing) -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -122,13 +126,33 @@
                 </configuration>
             </plugin>
 
-            <!-- SonarQube Plugin -->
+            <!-- JaCoCo for Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Sonar Maven Plugin -->
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.10.0.2594</version>
             </plugin>
-
         </plugins>
     </build>
 </project>
