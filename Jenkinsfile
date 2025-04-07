@@ -3,6 +3,14 @@ node
 
  def mavenHome = tool name: "Maven3.9.8"
 
+echo "The Job name is: ${env.JOB_NAME}"
+echo "The Nod ename is: ${env.NODE_NAME}"
+echo "The Build Number is: ${env.BUILD_NUMBER}"
+echo "The Jenkins Home directory is: ${JENKINS_HOME}"
+
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2'))]) 
+pipelineTriggers([githubPush()])])
+ 
  stage('CheckoutCode')
  {
   git branch: 'main', credentialsId: '9c54f3a6-d28e-4f8f-97a3-c8e939dcc8ff', url: 'https://github.com/ramu0709/new-maven-web-application.git'
