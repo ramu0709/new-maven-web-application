@@ -81,14 +81,14 @@
     <distributionManagement>
         <repository>
             <id>nexus</id>
-            <name>Sample-Test Repository</name>
-            <url>http://172.21.40.70:8081/repository/sample-test/</url>
+            <name>Sample-Release-Repository</name>
+            <url>http://172.21.40.70:8081/repository/sample-release/</url>
         </repository>
 
         <snapshotRepository>
             <id>nexus</id>
-            <name>Sample-Test Snapshot Repository</name>
-            <url>http://172.21.40.70:8081/repository/sample-test-snapshots/</url>
+            <name>Sample-Snapshot-Repository</name>
+            <url>http://172.21.40.70:8081/repository/sample-snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
 
