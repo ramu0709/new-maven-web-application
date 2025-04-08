@@ -83,7 +83,7 @@ node {
     }
 
     stage('✅ Deploy App Into Tomcat Server') {
-        sh 'cp target/maven-web-application.war /opt/tomcat/webapps/'
+        sh 'sudo cp target/maven-web-application.war /opt/tomcat/webapps/'
     }
 
     /*
