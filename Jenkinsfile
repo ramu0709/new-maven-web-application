@@ -26,16 +26,16 @@ node {
         returnStdout: true
     ).trim()
 
-    echo "✅ Git Branch: ${branchName}"                        // ℹ️ Fallback if env.BRANCH_NAME not set
+    echo "✅ Git Branch: ${branchName}" // ℹ️ Fallback if env.BRANCH_NAME not set
 
     stage('✅ Build') {
         sh "${mavenHome}/bin/mvn clean package"
     }
 
     stage('✅ Execute SonarQube Report') {
-        withSonarQubeEnv('sonarqube') {
-            withEnv(["SONAR_TOKEN=sonar-token"]) { // 🔐 Token must match Jenkins Global Configuration
-                sh "${mavenHome}/bin/mvn sonar:sonar -Dsonar.login=${env.SONAR_TOKEN}"
+        withSonarQubeEnv('sonarqube') { // ℹ️ Configured under Jenkins > Manage Jenkins > Configure System
+            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                sh "${mavenHome}/bin/mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN"
             }
         }
     }
@@ -63,36 +63,4 @@ node {
             minimumMethodCoverage: '80'
     }
 
-    stage('✅ Upload Artifact into Nexus') {
-        // ℹ️ Determine Nexus repository and version based on branch
-        def repository = (branchName == "main" || branchName == "master") ? "sample-release" : "sample-snapshot"
-        def version = (branchName == "main" || branchName == "master") ? "0.0.1" : "0.0.1-SNAPSHOT"
-
-        nexusArtifactUploader artifacts: [[
-            artifactId: 'maven-web-application',
-            classifier: '',
-            file: 'target/maven-web-application.war',
-            type: 'war'
-        ]],
-        credentialsId: 'nexus',
-        groupId: 'Batman',
-        version: version,
-        repository: repository,
-        nexusUrl: '172.21.40.70:8081/',
-        nexusVersion: 'nexus3',
-        protocol: 'http'
-    }
-
-    stage('✅ Deploy App Into Tomcat Server') {
-        sh 'cp target/maven-web-application.war /opt/tomcat/webapps/'
-    }
-
-    /*
-    stage('✅ Send Email Notification') {
-        emailext body: '''Build Over - Scripted way
-
-Regards,
-Batman''', subject: 'Build Over - Scripted way', to: '*****@gmail.com'
-    }
-    */
-}
+    stage('✅ Upload Artifact into Nexus')
