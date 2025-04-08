@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mt</groupId>
+    <groupId>Batman</groupId>
     <artifactId>maven-web-application</artifactId>
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
@@ -22,7 +22,6 @@
         <junit.version>5.9.3</junit.version>
         <log4j.version>2.20.0</log4j.version>
         <sonar.host.url>http://172.21.40.70:9000/</sonar.host.url>
-        <sonar.login>squ_092d81392297cd159031026e7952c60af271c28d</sonar.login>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
