@@ -17,6 +17,7 @@
         <junit.version>5.9.3</junit.version>
         <log4j.version>2.20.0</log4j.version>
         <sonar.host.url>http://172.21.40.70:9000/</sonar.host.url>
+        <sonar.login>${env.SONAR_TOKEN}</sonar.login>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -28,28 +29,24 @@
             <artifactId>json</artifactId>
             <version>20230227</version>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -78,7 +75,6 @@
             <name>Sample-Release-Repository</name>
             <url>http://172.21.40.70:8081/repository/sample-release/</url>
         </repository>
-
         <snapshotRepository>
             <id>nexus</id>
             <name>Sample-Snapshot-Repository</name>
@@ -89,14 +85,11 @@
     <build>
         <finalName>maven-web-application</finalName>
         <plugins>
-            <!-- WAR Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
             </plugin>
-
-            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -106,8 +99,6 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
-
-            <!-- Jetty (for local testing) -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -119,8 +110,6 @@
                     </webApp>
                 </configuration>
             </plugin>
-
-            <!-- JaCoCo for Code Coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -140,20 +129,10 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Sonar Maven Plugin -->
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.10.0.2594</version>
-                <configuration>
-                    <properties>
-                        <property>
-                            <name>sonar.login</name>
-                            <value>${env.SONAR_TOKEN}</value>
-                        </property>
-                    </properties>
-                </configuration>
             </plugin>
         </plugins>
     </build>
