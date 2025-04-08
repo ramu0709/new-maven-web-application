@@ -5,6 +5,6 @@
     <title>Welcome</title>
 </head>
 <body>
-    <h1>Its Working Jenkins Maven Build with Tomcat</h1>
+    <h1>Its Working Jenkins Maven Build with Sonarqube and Tomcat</h1>
 </body>
 </html>
