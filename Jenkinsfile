@@ -1,16 +1,12 @@
 node {
     def mavenHome = tool name: "Maven3.9.8"
 
-    // Dynamically resolve Git branch name
-    def branchName = env.BRANCH_NAME ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-
     // Set build name for display in Jenkins
     buildName "pipe - #${BUILD_NUMBER}"
 
     // Print basic job environment info
     echo "The Jenkins Job Name is: ${env.JOB_NAME}"         // ✅ Always available
     echo "The Jenkins Node Name is: ${env.NODE_NAME}"       // ✅ Always available
-    echo "Git Branch: ${branchName}"                        // ✅ Fallback if env.BRANCH_NAME not set
 
     // Set retention and trigger policies
     properties([
@@ -24,6 +20,14 @@ node {
             url: 'https://github.com/ramu0709/new-maven-web-application.git'
     }
 
+    // Dynamically resolve Git branch name (after checkout)
+    def branchName = env.BRANCH_NAME ?: sh(
+        script: "git rev-parse --abbrev-ref HEAD",
+        returnStdout: true
+    ).trim()
+
+    echo "Git Branch: ${branchName}"                        // ✅ Fallback if env.BRANCH_NAME not set
+
     stage('Build') {
         sh "${mavenHome}/bin/mvn clean package"
     }
@@ -36,8 +40,8 @@ node {
 
     stage('Upload Artifact into Nexus') {
         // Determine Nexus repository and version based on branch
-        def repository = branchName.contains("main") || branchName.contains("master") ? "sample-release" : "sample-snapshot"
-        def version = branchName.contains("main") || branchName.contains("master") ? "0.0.1" : "0.0.1-SNAPSHOT"
+        def repository = (branchName == "main" || branchName == "master") ? "sample-release" : "sample-snapshot"
+        def version = (branchName == "main" || branchName == "master") ? "0.0.1" : "0.0.1-SNAPSHOT"
 
         nexusArtifactUploader artifacts: [[
             artifactId: 'maven-web-application',
