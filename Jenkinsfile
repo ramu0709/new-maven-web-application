@@ -63,4 +63,35 @@ node {
             minimumMethodCoverage: '80'
     }
 
-    stage('✅ Upload Artifact into Nexus')
+    stage('✅ Upload Artifact into Nexus') {
+        def repository = (branchName == "main" || branchName == "master") ? "sample-release" : "sample-snapshot"
+        def version = (branchName == "main" || branchName == "master") ? "0.0.1" : "0.0.1-SNAPSHOT"
+
+        nexusArtifactUploader artifacts: [[
+            artifactId: 'maven-web-application',
+            classifier: '',
+            file: 'target/maven-web-application.war',
+            type: 'war'
+        ]],
+        credentialsId: 'nexus',
+        groupId: 'Batman',
+        version: version,
+        repository: repository,
+        nexusUrl: '172.21.40.70:8081/',
+        nexusVersion: 'nexus3',
+        protocol: 'http'
+    }
+
+    stage('✅ Deploy App Into Tomcat Server') {
+        sh 'cp target/maven-web-application.war /opt/tomcat/webapps/'
+    }
+
+    /*
+    stage('✅ Send Email Notification') {
+        emailext body: '''Build Over - Scripted way
+
+Regards,
+Batman''', subject: 'Build Over - Scripted way', to: '*****@gmail.com'
+    }
+    */
+} // ✅ THIS CLOSING BRACE WAS MISSING EARLIER
