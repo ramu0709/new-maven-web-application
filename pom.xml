@@ -11,11 +11,6 @@
     <name>maven-web-application</name>
     <description>Maven Web Project for Java Project</description>
 
-    <organization>
-        <name>Ramu</name>
-        <url>http://172.21.40.70:80</url>
-    </organization>
-
     <properties>
         <jdk.version>17</jdk.version>
         <spring.version>6.0.6</spring.version>
@@ -151,6 +146,14 @@
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.10.0.2594</version>
+                <configuration>
+                    <properties>
+                        <property>
+                            <name>sonar.login</name>
+                            <value>${env.SONAR_TOKEN}</value>
+                        </property>
+                    </properties>
+                </configuration>
             </plugin>
         </plugins>
     </build>
