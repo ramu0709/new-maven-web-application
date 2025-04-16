@@ -5,8 +5,8 @@ node {
     buildName "pipe - #${BUILD_NUMBER}"
 
     // ✅ Print basic job environment info
-    echo "✅ The Jenkins Job Name is: ${env.JOB_NAME}"         // ℹ️ Always available
-    echo "✅ The Jenkins Node Name is: ${env.NODE_NAME}"       // ℹ️ Always available
+    echo "✅ The Jenkins Job Name is: ${env.JOB_NAME}"
+    echo "✅ The Jenkins Node Name is: ${env.NODE_NAME}"
 
     // ✅ Set retention and trigger policies
     properties([
@@ -15,9 +15,11 @@ node {
     ])
 
     stage('✅ Checkout Code') {
-        git branch: 'main',
-            credentialsId: '9c54f3a6-d28e-4f8f-97a3-c8e939dcc8ff',
-            url: 'https://github.com/ramu0709/new-maven-web-application.git'
+        withCredentials([string(credentialsId: 'git-url2', variable: 'GIT_URL')]) {
+            git branch: 'main',
+                credentialsId: 'github-credentials',
+                url: GIT_URL
+        }
     }
 
     // ✅ Dynamically resolve Git branch name (after checkout)
@@ -26,16 +28,24 @@ node {
         returnStdout: true
     ).trim()
 
-    echo "✅ Git Branch: ${branchName}" // ℹ️ Fallback if env.BRANCH_NAME not set
+    echo "✅ Git Branch: ${branchName}"
 
     stage('✅ Build') {
         sh "${mavenHome}/bin/mvn clean package"
     }
 
     stage('✅ Execute SonarQube Report') {
-        withSonarQubeEnv('sonarqube') { // ℹ️ Configured under Jenkins > Manage Jenkins > Configure System
+        withSonarQubeEnv('sonarqube') {
             withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                sh "${mavenHome}/bin/mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN"
+                sh """
+                ${mavenHome}/bin/mvn sonar:sonar \
+                    -Dsonar.login=$SONAR_TOKEN \
+                    -Dsonar.java.coveragePlugin=jacoco \
+                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+                    -Dsonar.projectKey=maven-web-application \
+                    -Dsonar.projectName=maven-web-application \
+                    -Dsonar.coverage.minimum=80.0
+                """
             }
         }
     }
@@ -94,4 +104,4 @@ Regards,
 Batman''', subject: 'Build Over - Scripted way', to: '*****@gmail.com'
     }
     */
-} // ✅ THIS CLOSING BRACE WAS MISSING EARLIER
+} // ✅ End of Scripted Pipeline
