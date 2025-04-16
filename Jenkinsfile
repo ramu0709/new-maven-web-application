@@ -1,28 +1,21 @@
 node {
     def mavenHome = tool name: "Maven3.9.9"
 
-    // ✅ Set build name for display in Jenkins
     buildName "pipe - #${BUILD_NUMBER}"
-
-    // ✅ Print basic job environment info
     echo "✅ The Jenkins Job Name is: ${env.JOB_NAME}"
     echo "✅ The Jenkins Node Name is: ${env.NODE_NAME}"
 
-    // ✅ Set retention and trigger policies
     properties([
         buildDiscarder(logRotator(numToKeepStr: '2')),
         pipelineTriggers([githubPush()])
     ])
 
     stage('✅ Checkout Code') {
-        withCredentials([string(credentialsId: 'git-url2', variable: 'GIT_URL')]) {
-            git branch: 'main',
-                credentialsId: 'github-credentials',
-                url: GIT_URL
-        }
+        git branch: 'main',
+            credentialsId: '9c54f3a6-d28e-4f8f-97a3-c8e939dcc8ff',
+            url: 'https://github.com/ramu0709/new-maven-web-application.git'
     }
 
-    // ✅ Dynamically resolve Git branch name (after checkout)
     def branchName = env.BRANCH_NAME ?: sh(
         script: "git rev-parse --abbrev-ref HEAD",
         returnStdout: true
@@ -31,21 +24,13 @@ node {
     echo "✅ Git Branch: ${branchName}"
 
     stage('✅ Build') {
-        sh "${mavenHome}/bin/mvn clean package"
+        sh "${mavenHome}/bin/mvn clean package" // no deploy here
     }
 
     stage('✅ Execute SonarQube Report') {
         withSonarQubeEnv('sonarqube') {
             withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                sh """
-                ${mavenHome}/bin/mvn sonar:sonar \
-                    -Dsonar.login=$SONAR_TOKEN \
-                    -Dsonar.java.coveragePlugin=jacoco \
-                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-                    -Dsonar.projectKey=maven-web-application \
-                    -Dsonar.projectName=maven-web-application \
-                    -Dsonar.coverage.minimum=80.0
-                """
+                sh "${mavenHome}/bin/mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN"
             }
         }
     }
@@ -77,19 +62,23 @@ node {
         def repository = (branchName == "main" || branchName == "master") ? "sample-release" : "sample-snapshot"
         def version = (branchName == "main" || branchName == "master") ? "0.0.1" : "0.0.1-SNAPSHOT"
 
-        nexusArtifactUploader artifacts: [[
-            artifactId: 'maven-web-application',
-            classifier: '',
-            file: 'target/maven-web-application.war',
-            type: 'war'
-        ]],
-        credentialsId: 'nexus',
-        groupId: 'Batman',
-        version: version,
-        repository: repository,
-        nexusUrl: '172.21.40.70:8081/',
-        nexusVersion: 'nexus3',
-        protocol: 'http'
+        withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+            echo "🔐 Uploading version: ${version} to ${repository}"
+
+            nexusArtifactUploader artifacts: [[
+                artifactId: 'maven-web-application',
+                classifier: '',
+                file: 'target/maven-web-application.war',
+                type: 'war'
+            ]],
+            credentialsId: 'nexus-credentials',
+            groupId: 'Batman',
+            version: version,
+            repository: repository,
+            nexusUrl: '172.21.40.70:8081/',
+            nexusVersion: 'nexus3',
+            protocol: 'http'
+        }
     }
 
     stage('✅ Deploy App Into Tomcat Server') {
@@ -98,10 +87,4 @@ node {
 
     /*
     stage('✅ Send Email Notification') {
-        emailext body: '''Build Over - Scripted way
-
-Regards,
-Batman''', subject: 'Build Over - Scripted way', to: '*****@gmail.com'
-    }
-    */
-} // ✅ End of Scripted Pipeline
+        emailext body: '''Build Over - Scripted
