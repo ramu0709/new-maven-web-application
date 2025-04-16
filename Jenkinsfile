@@ -1,5 +1,5 @@
 node {
-    def mavenHome = tool name: "Maven3.9.8"
+    def mavenHome = tool name: "Maven3.9.9"
 
     // ✅ Set build name for display in Jenkins
     buildName "pipe - #${BUILD_NUMBER}"
